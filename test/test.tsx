@@ -187,6 +187,28 @@ const fn = () => {
   ]}
 />
 { }
+<CreateOrUpdateDepartmentModal title='编辑部门' record={record} trigger={<a>编辑</a>}
+  {
+  pattern: userNameReg
+  message:
+    '用户名支持5~30个字符，支持数字，英文字母，英文下划线，英文句号,至少一个英文字母'
+}
+
+{ record?.userId ? null : <PasswordField label="登录密码" name="password" /> }
+
+{
+  required: true,
+    message: '请输入确认密码!',
+}
+{ }
+<Modal {...rest} title='选择部门' footer={<Row justify='end'>{footer}</Row>}>
+  <TreeTransfer
+    targetKeys={targetKeys}
+    dataSource={dataSource}
+    onChange={onTransferChange}
+    onSelect={setSelectedRows}
+  />
+</Modal>
 {/* <ExclamationCircleFilled style={{ color: '#faad14' }} /> 注意: 请确认选择的商品为供货商品 */ }
 // 待定解决：
 // 1
