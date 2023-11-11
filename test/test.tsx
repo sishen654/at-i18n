@@ -1,5 +1,13 @@
 // @ts-nocheck
 
+const onConfirm = async () => {
+  const res = await queryRemark({ id: record?.id as string, remark: txt });
+  if (res.status.success) {
+    message.success('添加备注成功');
+    modalRef.current?.close();
+  }
+};
+
 // 1) 注释
 // 第一种
 // 第 1.1 种

@@ -98,13 +98,13 @@ function transformFile(filePath: string, key: string) {
     else if (checkContainComment(line)) {
       const val = checkContainComment(line) as string
       if (checkCn(val)) {
-        const newVal = changeFont(val, lineIndex)
+        const newVal = changeFont(val, lineIndex, lines)
         line = line.replace(val, newVal)
       }
     }
     // 3 读取为中文
     else if (checkCn(line)) {
-      line = changeFont(line, lineIndex)
+      line = changeFont(line, lineIndex, lines)
     }
     // 4 重新赋值
     newData += `${line}${lineIndex === lines.length - 1 ? "" : "\n"}`
@@ -113,7 +113,7 @@ function transformFile(filePath: string, key: string) {
   fs.writeFileSync(filePath, newData)
 }
 
-function changeFont(input: string, lineIndex: number) {
+function changeFont(input: string, lineIndex: number, lines: string[]) {
   let arr: string[] = []
   if (checkCnInSuperStr(input)) {
     arr = checkCnInSuperStr(input) as string[]
@@ -144,23 +144,29 @@ function changeFont(input: string, lineIndex: number) {
     })
   }
   else if (checkCnInElementCase1(input)) {
+
     arr = checkCnInElementCase1(input) as string[]
     arr.forEach(str => {
       input = input.replaceAll(str, `{$t("${str}")}`)
     })
   }
-  else if (checkCnInElementCase2(input)) {
-    arr = checkCnInElementCase2(input) as string[]
-    arr.forEach(str => {
-      input = input.replaceAll(str, `{$t("${str}")}`)
-    })
-  }
+  // else if (checkCnInElementCase2(input)) {
+  //   arr = checkCnInElementCase2(input) as string[]
+  //   arr.forEach(str => {
+  //     input = input.replaceAll(str, `{$t("${str}")}`)
+  //   })
+  // }
   else if (checkCnInValue(input)) {
     arr = checkCnInValue(input) as string[]
     arr.forEach(str => {
       input = input.replaceAll(str, ($1, index) => {
         if (input.substring(index - 3, index) === "$t(") return $1;
-        return /^["'`][\w\W]+["'`]$/.test(str) ? `$t(${str})` : `$t("${str}")`
+        const usageStr = /^["'`][\w\W]+["'`]$/.test(str) ? `$t(${str})` : `$t("${str}")`
+        // 上一行是标签
+        if (/<[\w\W]+>$/g.test(lines[lineIndex - 1])) {
+          return `{${usageStr}}`
+        }
+        return usageStr
       })
     })
   }

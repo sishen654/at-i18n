@@ -44,3 +44,10 @@ return Promise.reject('存在重复规格名');
   <li>3.文件夹名称请与商品SPU编码保持一致，文件夹内最多放15张图片。</li>
   <li>4.图片大小：限制在3M以内，尺寸大小：建议在400x400像素/800x800像素</li>
 </div>
+const onConfirm = async () => {
+  const res = await queryRemark({ id: record?.id as string, remark: txt });
+  if (res.status.success) {
+    message.success('添加备注成功');
+    modalRef.current?.close();
+  }
+};
